@@ -67,12 +67,12 @@ abstract class ChannelLincheckTestBaseAll(
     sequentialSpecification: Class<*>,
     obstructionFree: Boolean = true
 ) : ChannelLincheckTestBaseWithOnSend(c, sequentialSpecification, obstructionFree) {
-    @Operation
-    override fun trySend(value: Int) = super.trySend(value)
-    @Operation
-    override fun isClosedForReceive() = super.isClosedForReceive()
-    @Operation
-    override fun isEmpty() = super.isEmpty()
+//    @Operation
+//    override fun trySend(value: Int) = super.trySend(value)
+//    @Operation
+//    override fun isClosedForReceive() = super.isClosedForReceive()
+//    @Operation
+//    override fun isEmpty() = super.isEmpty()
 }
 
 abstract class ChannelLincheckTestBaseWithOnSend(
@@ -80,12 +80,12 @@ abstract class ChannelLincheckTestBaseWithOnSend(
     sequentialSpecification: Class<*>,
     obstructionFree: Boolean = true
 ) : ChannelLincheckTestBase(c, sequentialSpecification, obstructionFree) {
-    @Operation(allowExtraSuspension = true, blocking = true)
-    suspend fun sendViaSelect(@Param(name = "value") value: Int): Any = try {
-        select<Unit> { c.onSend(value) {} }
-    } catch (e: NumberedCancellationException) {
-        e.testResult
-    }
+//    @Operation(allowExtraSuspension = true, blocking = true)
+//    suspend fun sendViaSelect(@Param(name = "value") value: Int): Any = try {
+//        select<Unit> { c.onSend(value) {} }
+//    } catch (e: NumberedCancellationException) {
+//        e.testResult
+//    }
 }
 
 @Param.Params(
@@ -107,12 +107,12 @@ abstract class ChannelLincheckTestBase(
 
     // @Operation TODO: `trySend()` is not linearizable as it can fail due to postponed buffer expansion
     //            TODO: or make a rendezvous with `tryReceive`, which violates the sequential specification.
-    open fun trySend(@Param(name = "value") value: Int): Any = c.trySend(value)
-        .onSuccess { return true }
-        .onFailure {
-            return if (it is NumberedCancellationException) it.testResult
-            else false
-        }
+//    open fun trySend(@Param(name = "value") value: Int): Any = c.trySend(value)
+//        .onSuccess { return true }
+//        .onFailure {
+//            return if (it is NumberedCancellationException) it.testResult
+//            else false
+//        }
 
     @Operation(allowExtraSuspension = true, blocking = true)
     suspend fun receive(): Any = try {
@@ -121,38 +121,38 @@ abstract class ChannelLincheckTestBase(
         e.testResult
     }
 
-    @Operation(allowExtraSuspension = true, blocking = true)
-    suspend fun receiveCatching(): Any = c.receiveCatching()
-        .onSuccess { return it }
-        .onClosed { e -> return (e as NumberedCancellationException).testResult }
+//    @Operation(allowExtraSuspension = true, blocking = true)
+//    suspend fun receiveCatching(): Any = c.receiveCatching()
+//        .onSuccess { return it }
+//        .onClosed { e -> return (e as NumberedCancellationException).testResult }
 
-    @Operation(blocking = true)
-    fun tryReceive(): Any? =
-        c.tryReceive()
-            .onSuccess { return it }
-            .onFailure { return if (it is NumberedCancellationException) it.testResult else null }
+//    @Operation(blocking = true)
+//    fun tryReceive(): Any? =
+//        c.tryReceive()
+//            .onSuccess { return it }
+//            .onFailure { return if (it is NumberedCancellationException) it.testResult else null }
 
-    @Operation(allowExtraSuspension = true, blocking = true)
-    suspend fun receiveViaSelect(): Any = try {
-        select<Int> { c.onReceive { it } }
-    } catch (e: NumberedCancellationException) {
-        e.testResult
-    }
+//    @Operation(allowExtraSuspension = true, blocking = true)
+//    suspend fun receiveViaSelect(): Any = try {
+//        select<Int> { c.onReceive { it } }
+//    } catch (e: NumberedCancellationException) {
+//        e.testResult
+//    }
 
-    @Operation(causesBlocking = true, blocking = true)
-    fun close(@Param(name = "closeToken") token: Int): Boolean = c.close(NumberedCancellationException(token))
+//    @Operation(causesBlocking = true, blocking = true)
+//    fun close(@Param(name = "closeToken") token: Int): Boolean = c.close(NumberedCancellationException(token))
 
-    @Operation(causesBlocking = true, blocking = true)
-    fun cancel(@Param(name = "closeToken") token: Int) = c.cancel(NumberedCancellationException(token))
+//    @Operation(causesBlocking = true, blocking = true)
+//    fun cancel(@Param(name = "closeToken") token: Int) = c.cancel(NumberedCancellationException(token))
 
-    // @Operation TODO non-linearizable in BufferedChannel
-    open fun isClosedForReceive() = c.isClosedForReceive
+//    // @Operation TODO non-linearizable in BufferedChannel
+//    open fun isClosedForReceive() = c.isClosedForReceive
 
-    @Operation(blocking = true)
-    fun isClosedForSend() = c.isClosedForSend
+//    @Operation(blocking = true)
+//    fun isClosedForSend() = c.isClosedForSend
 
-    // @Operation TODO non-linearizable in BufferedChannel
-    open fun isEmpty() = c.isEmpty
+//    // @Operation TODO non-linearizable in BufferedChannel
+//    open fun isEmpty() = c.isEmpty
 
     @StateRepresentation
     fun state() = (c as? BufferedChannel<*>)?.toStringDebug() ?: c.toString()

@@ -16,7 +16,7 @@ actual val VERBOSE = try {
 /**
  * Is `true` when running in a nightly stress test mode.
  */
-actual val isStressTest = System.getProperty("stressTest")?.toBoolean() ?: false
+actual val isStressTest = System.getProperty("stressTest")?.toBoolean() ?: true
 
 actual val stressTestMultiplierSqrt = if (isStressTest) 5 else 1
 
